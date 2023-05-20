@@ -3,7 +3,11 @@ import { useUserStore } from '../stores/UserStore';
 
 const MainLayout = () => {
   const { user } = useUserStore();
-  return <>{!user ? <Navigate to={'/registration'} /> : <Outlet />}</>;
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 };
 
 export default MainLayout;
