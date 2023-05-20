@@ -1,11 +1,9 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useUserStore } from '../stores/UserStore';
 
 const MainLayout = () => {
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  const { user } = useUserStore();
+  return <>{!user ? <Navigate to={'/registration'} /> : <Outlet />}</>;
 };
 
 export default MainLayout;
