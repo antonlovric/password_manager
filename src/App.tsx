@@ -1,19 +1,27 @@
-import { useState } from 'react';
 import './App.css';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { Button } from '@mui/material';
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import Registration from './pages/Registration';
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div>
-      <Button variant='contained'>Henlo</Button>
-    </div>
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path='/' element={<MainLayout />}>
+        <Route path='register' element={<Registration />} />
+      </Route>
+    )
   );
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
