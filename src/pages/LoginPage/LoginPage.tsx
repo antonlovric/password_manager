@@ -3,8 +3,8 @@ import { Box, Button, TextField } from '@mui/material';
 import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
 
 const LoginPage = () => {
@@ -13,10 +13,11 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
+  const navigate = useNavigate();
 
   const onSubmit = async (data: LoginSchema) => {
     const res = await signInWithEmailAndPassword(auth, data.email, data.password);
-    console.log(res);
+    navigate('/', { replace: true });
   };
 
   return (

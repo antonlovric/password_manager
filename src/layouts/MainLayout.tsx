@@ -1,10 +1,13 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useUserStore } from '../stores/UserStore';
+import { Outlet } from 'react-router-dom';
+import { auth } from '../helpers/firebase';
+import NavigationBar from '../components/NavigationBar';
 
 const MainLayout = () => {
-  const { user } = useUserStore();
+  const user = auth.currentUser;
+
   return (
     <>
+      {user && <NavigationBar />}
       <Outlet />
     </>
   );
