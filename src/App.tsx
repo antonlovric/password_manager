@@ -10,12 +10,14 @@ import {
 } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Registration from './pages/RegistrationPage/RegistrationPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
         <Route path='registration' element={<Registration />} />
+        <Route path='login' element={<LoginPage />} />
       </Route>
     )
   );
