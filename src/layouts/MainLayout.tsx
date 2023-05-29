@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { auth } from '../helpers/firebase';
 import NavigationBar from '../components/NavigationBar';
 
@@ -7,7 +7,7 @@ const MainLayout = () => {
 
   return (
     <>
-      {user && <NavigationBar />}
+      {user ? <NavigationBar /> : <Navigate to='login' />}
       <Outlet />
     </>
   );

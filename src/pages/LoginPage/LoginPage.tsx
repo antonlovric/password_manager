@@ -4,7 +4,7 @@ import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
 
 const LoginPage = () => {
@@ -13,15 +13,22 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
+
   const navigate = useNavigate();
 
   const onSubmit = async (data: LoginSchema) => {
-    const res = await signInWithEmailAndPassword(auth, data.email, data.password);
+    await signInWithEmailAndPassword(auth, data.email, data.password);
     navigate('/', { replace: true });
   };
 
   return (
-    <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={'50px'}>
+    <Box
+      display={'flex'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      gap={'50px'}
+      height={'100vh'}
+    >
       <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
         <Box component={'h1'}>Login</Box>
         <Box

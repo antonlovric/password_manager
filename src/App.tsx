@@ -12,14 +12,16 @@ import MainLayout from './layouts/MainLayout';
 import Registration from './pages/RegistrationPage/RegistrationPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import HomePage from './pages/HomePage/HomePage';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
-        <Route path='registration' element={<Registration />} />
-        <Route path='login' element={<LoginPage />} />
         <Route index element={<HomePage />} />
+        <Route path='registration' element={<Registration />} />
+        <Route path='*' element={<NotFoundPage />} />
+        <Route path='login' element={<LoginPage />} />
       </Route>
     )
   );
