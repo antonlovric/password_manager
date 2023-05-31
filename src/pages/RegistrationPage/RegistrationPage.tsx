@@ -1,9 +1,13 @@
-import { Box, Button, TextField } from '@mui/material';
+import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { RegistrationSchema, schema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { useEffect } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { auth } from '../../helpers/firebase';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -13,12 +17,34 @@ const Registration = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<RegistrationSchema>({ resolver: zodResolver(schema) });
-  const navigate = useNavigate();
+  const [toast, setToast] = useState({
+    message: '',
+    type: 'success' as AlertColor,
+    isVisible: false,
+  });
+
+  const handleClose = () => setToast({ ...toast, isVisible: false });
+  const handleOpen = (toastInfo: typeof toast) => setToast({ ...toastInfo });
 
   const onSubmit = async (data: RegistrationSchema) => {
-    const res = await createUserWithEmailAndPassword(auth, data.email, data.password);
-    await updateProfile(res.user, { displayName: `${data.firstName} ${data.lastName}` });
-    navigate('/', { replace: true });
+    try {
+      const res = await createUserWithEmailAndPassword(auth, data.email, data.password);
+
+      await updateProfile(res.user, { displayName: `${data.firstName} ${data.lastName}` });
+      await sendEmailVerification(res.user);
+
+      handleOpen({
+        isVisible: true,
+        message: 'Registration successful! Please follow the instructions you received via email!',
+        type: 'success',
+      });
+    } catch (error) {
+      handleOpen({
+        isVisible: true,
+        message: 'There has been an error, please try again',
+        type: 'error',
+      });
+    }
   };
 
   return (
@@ -134,6 +160,16 @@ const Registration = () => {
           Have an account? Proceed to <Link to={'/login'}>Login</Link>.
         </Box>
       </Box>
+      <Snackbar
+        open={toast.isVisible}
+        autoHideDuration={6000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity={toast.type} sx={{ width: '100%' }}>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

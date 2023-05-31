@@ -1,11 +1,12 @@
 import loginImg from '../../assets/login-img.svg';
-import { Box, Button, TextField } from '@mui/material';
+import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
 import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
+import { useState } from 'react';
 
 const LoginPage = () => {
   const {
@@ -16,9 +17,26 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
+  const [toast, setToast] = useState({
+    message: '',
+    type: 'success' as AlertColor,
+    isVisible: false,
+  });
+
+  const handleClose = () => setToast({ ...toast, isVisible: false });
+
+  const handleOpen = (toastInfo: typeof toast) => setToast({ ...toastInfo });
+
   const onSubmit = async (data: LoginSchema) => {
-    await signInWithEmailAndPassword(auth, data.email, data.password);
-    navigate('/', { replace: true });
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+
+      if (!auth.currentUser?.emailVerified)
+        handleOpen({ isVisible: true, message: 'Please verify your email', type: 'error' });
+      else navigate('/', { replace: true });
+    } catch (error) {
+      handleOpen({ isVisible: true, message: 'Error when logging in', type: 'error' });
+    }
   };
 
   return (
@@ -80,6 +98,16 @@ const LoginPage = () => {
         </Box>
       </Box>
       <Box component={'img'} src={loginImg} width={'400px'}></Box>
+      <Snackbar
+        open={toast.isVisible}
+        autoHideDuration={6000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity={toast.type} sx={{ width: '100%' }}>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

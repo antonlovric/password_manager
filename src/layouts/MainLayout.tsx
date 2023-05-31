@@ -1,13 +1,19 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { auth } from '../helpers/firebase';
 import NavigationBar from '../components/NavigationBar';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useState } from 'react';
 
 const MainLayout = () => {
-  const user = auth.currentUser;
+  const [isLoggedIn, setIsLoggedIn] = useState(!!auth.currentUser);
+
+  onAuthStateChanged(auth, (user) => {
+    setIsLoggedIn(!!user);
+  });
 
   return (
     <>
-      {user ? <NavigationBar /> : <Navigate to='login' />}
+      {isLoggedIn ? <NavigationBar /> : <Navigate to='login' />}
       <Outlet />
     </>
   );
