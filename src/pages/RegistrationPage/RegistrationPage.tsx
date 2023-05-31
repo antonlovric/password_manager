@@ -7,9 +7,9 @@ import {
   sendEmailVerification,
   updateProfile,
 } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { auth } from '../../helpers/firebase';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Registration = () => {
   const {
