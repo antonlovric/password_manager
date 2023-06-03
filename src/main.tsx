@@ -4,6 +4,12 @@ import App from './App.tsx';
 import './index.css';
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_KEY
+);
 
 export const themeOptions: ThemeOptions = {
   palette: {

@@ -13,6 +13,7 @@ import Registration from './pages/RegistrationPage/RegistrationPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import HomePage from './pages/HomePage/HomePage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import VerificationPage from './pages/VerifcationPage/VerificationPage';
 
 function App() {
   const router = createBrowserRouter(
@@ -22,6 +23,7 @@ function App() {
         <Route path='registration' element={<Registration />} />
         <Route path='*' element={<NotFoundPage />} />
         <Route path='login' element={<LoginPage />} />
+        <Route path='verification' element={<VerificationPage />} />
       </Route>
     )
   );
