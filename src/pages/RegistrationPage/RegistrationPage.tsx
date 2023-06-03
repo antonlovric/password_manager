@@ -4,12 +4,14 @@ import { RegistrationSchema, schema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   sendEmailVerification,
   updateProfile,
 } from 'firebase/auth';
-import { useState } from 'react';
-import { auth } from '../../helpers/firebase';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { auth, database } from '../../helpers/firebase';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { getDatabase, onValue, ref, set } from 'firebase/database';
 
 const Registration = () => {
   const {
@@ -22,7 +24,6 @@ const Registration = () => {
     type: 'success' as AlertColor,
     isVisible: false,
   });
-
   const handleClose = () => setToast({ ...toast, isVisible: false });
   const handleOpen = (toastInfo: typeof toast) => setToast({ ...toastInfo });
 
@@ -49,6 +50,7 @@ const Registration = () => {
 
   return (
     <Box component={'div'} display={'flex'} flexDirection={'column'}>
+      {auth.currentUser && <Navigate to={'/'} />}
       <Box component={'h1'} textAlign={'center'}>
         Registration
       </Box>

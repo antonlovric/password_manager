@@ -3,10 +3,11 @@ import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/materi
 import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { theme } from '../../main';
 
 const LoginPage = () => {
   const {
@@ -16,6 +17,10 @@ const LoginPage = () => {
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
 
   const navigate = useNavigate();
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) navigate('/');
+  });
 
   const [toast, setToast] = useState({
     message: '',
@@ -46,7 +51,9 @@ const LoginPage = () => {
       justifyContent={'center'}
       gap={'50px'}
       height={'100vh'}
+      flexDirection={'row'}
     >
+      {auth.currentUser && <Navigate to={'/'} />}
       <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
         <Box component={'h1'}>Login</Box>
         <Box

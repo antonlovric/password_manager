@@ -8,7 +8,7 @@ const MainLayout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!auth.currentUser);
 
   onAuthStateChanged(auth, (user) => {
-    setIsLoggedIn(!!user);
+    setIsLoggedIn(!!user?.emailVerified);
   });
 
   return (
