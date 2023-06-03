@@ -25,14 +25,27 @@ const Registration = () => {
     try {
       const redirectUrl = `${import.meta.env.VITE_APP}/verification`;
 
-      console.log(redirectUrl);
-
-      await supabase.auth.signUp({
+      const res = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         phone: data.phoneNumber,
         options: { emailRedirectTo: redirectUrl },
       });
+
+      if (!res.error) {
+        await supabase
+          .from('users')
+          .insert([
+            {
+              id: res.data.user?.id,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              phone_number: data.phoneNumber,
+              email: data.email,
+            },
+          ])
+          .single();
+      }
 
       handleOpen({
         isVisible: true,
