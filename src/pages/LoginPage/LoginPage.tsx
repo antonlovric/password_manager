@@ -7,7 +7,8 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
 import { useEffect, useState } from 'react';
-import { theme } from '../../main';
+import { supabase, theme } from '../../main';
+import { useUserStore } from '../../stores/UserStore';
 
 const LoginPage = () => {
   const {
@@ -17,6 +18,7 @@ const LoginPage = () => {
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
 
   const navigate = useNavigate();
+  const userStore = useUserStore();
 
   onAuthStateChanged(auth, (user) => {
     if (user) navigate('/');
@@ -34,9 +36,16 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const res = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+      console.log(res);
+      const user = (await supabase.auth.getUser()).data.user;
+      // userStore.setUser({email: user?.email, firstName: user.})
+      const isVerified = user?.email_confirmed_at;
 
-      if (!auth.currentUser?.emailVerified)
+      if (!isVerified)
         handleOpen({ isVisible: true, message: 'Please verify your email', type: 'error' });
       else navigate('/', { replace: true });
     } catch (error) {
