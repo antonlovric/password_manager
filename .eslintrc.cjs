@@ -7,8 +7,14 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'unused-imports'],
   rules: {
     'react-refresh/only-export-components': 'warn',
+    'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+    ],
   },
-}
+};

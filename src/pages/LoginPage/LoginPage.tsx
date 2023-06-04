@@ -1,14 +1,13 @@
-import loginImg from '../../assets/login-img.svg';
-import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
-import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import loginImg from '../../assets/login-img.svg';
 import { auth } from '../../helpers/firebase';
-import { useEffect, useState } from 'react';
 import { supabase } from '../../supabase';
-import { useUserStore } from '../../stores/UserStore';
+import { LoginSchema, loginSchema } from './variables';
 
 const LoginPage = () => {
   const {
@@ -18,7 +17,6 @@ const LoginPage = () => {
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
 
   const navigate = useNavigate();
-  const userStore = useUserStore();
 
   onAuthStateChanged(auth, (user) => {
     if (user) navigate('/');
@@ -36,13 +34,11 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      const res = await supabase.auth.signInWithPassword({
+      await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
-      console.log(res);
       const user = (await supabase.auth.getUser()).data.user;
-      // userStore.setUser({email: user?.email, firstName: user.})
       const isVerified = user?.email_confirmed_at;
 
       if (!isVerified)

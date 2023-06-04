@@ -21,6 +21,7 @@ interface ITableRow {
   username: string;
   password: string;
   expiration_date: string;
+  id: number;
 }
 
 const HomePage = () => {
@@ -61,7 +62,7 @@ const HomePage = () => {
   const fetchData = async () => {
     const res = await supabase
       .from('passwords')
-      .select('website,username,password,expiration_date');
+      .select('website,username,password,expiration_date,id');
     setData(res.data || []);
   };
 
@@ -69,15 +70,28 @@ const HomePage = () => {
     const userInfo = await supabase.auth.getUser();
     const expirationDate = getExpirationDate();
 
-    await supabase.from('passwords').insert([
-      {
-        password: data.password,
-        username: data.username,
-        website: data.website,
-        expiration_date: expirationDate,
-        user_id: userInfo.data.user?.id,
-      },
-    ]);
+    if (editData) {
+      await supabase
+        .from('passwords')
+        .update({
+          password: data.password,
+          username: data.username,
+          website: data.website,
+          expiration_date: expirationDate,
+        })
+        .eq('id', editData.id);
+    } else {
+      await supabase.from('passwords').insert([
+        {
+          password: data.password,
+          username: data.username,
+          website: data.website,
+          expiration_date: expirationDate,
+          user_id: userInfo.data.user?.id,
+        },
+      ]);
+    }
+
     fetchData();
     setIsVisible(false);
   };
@@ -104,7 +118,7 @@ const HomePage = () => {
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <h1>Home</h1>
+        <h1>Password Manager</h1>
       </Box>
       <Box sx={{ px: '50px' }}>
         <Button variant='contained' onClick={handleAddPassword}>

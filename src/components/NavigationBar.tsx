@@ -1,11 +1,9 @@
-import { AppBar, Box, Toolbar, IconButton, Menu, MenuItem, Avatar } from '@mui/material';
-import React, { useState } from 'react';
-import { auth } from '../helpers/firebase';
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
-import { supabase } from '../supabase';
 import { AccountCircle } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 
 const NavigationBar = () => {
   const [isOpen, setIsOpen] = useState(false);
