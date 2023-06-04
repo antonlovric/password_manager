@@ -1,14 +1,13 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { auth } from '../helpers/firebase';
 import NavigationBar from '../components/NavigationBar';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useState } from 'react';
+import { supabase } from '../supabase';
 
 const MainLayout = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!auth.currentUser);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  onAuthStateChanged(auth, (user) => {
-    setIsLoggedIn(!!user?.emailVerified);
+  supabase.auth.onAuthStateChange((event, session) => {
+    setIsLoggedIn(!!session?.user);
   });
 
   return (

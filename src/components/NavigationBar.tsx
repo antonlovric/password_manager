@@ -1,16 +1,15 @@
-import { AppBar, Box, Toolbar, IconButton, Menu, MenuItem, Avatar } from '@mui/material';
-import React, { useState } from 'react';
-import { auth } from '../helpers/firebase';
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { AccountCircle } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 
 const NavigationBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [menuElement, setMenuElement] = useState<HTMLElement | null>(null);
   const navigate = useNavigate();
-  const user = auth.currentUser;
   const toggleMenu: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     setIsOpen(!isOpen);
     setMenuElement(e.currentTarget);
@@ -21,15 +20,8 @@ const NavigationBar = () => {
     setMenuElement(e.currentTarget);
   };
 
-  const getInitials = () => {
-    const name = user?.displayName?.split(' ');
-    if (!name) return '';
-    const initials = name[0][0] + name[1][0];
-    return initials.toUpperCase();
-  };
-
   const handleLogout = async () => {
-    await signOut(auth);
+    await supabase.auth.signOut();
     navigate('/login', { replace: true });
   };
   return (
@@ -60,9 +52,10 @@ const NavigationBar = () => {
           aria-label='menu'
           sx={{ mr: 2 }}
         >
-          <Avatar color='#FFF'>{getInitials()}</Avatar>
+          <Avatar color='#FFF'>
+            <AccountCircle />
+          </Avatar>
           <Menu open={isProfileOpen} anchorEl={menuElement}>
-            <MenuItem>Profile</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </IconButton>

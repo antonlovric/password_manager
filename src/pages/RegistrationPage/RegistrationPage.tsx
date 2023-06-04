@@ -2,16 +2,10 @@ import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/materi
 import { Controller, useForm } from 'react-hook-form';
 import { RegistrationSchema, schema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  sendEmailVerification,
-  updateProfile,
-} from 'firebase/auth';
-import { useEffect, useState } from 'react';
-import { auth, database } from '../../helpers/firebase';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { getDatabase, onValue, ref, set } from 'firebase/database';
+import { useState } from 'react';
+import { auth } from '../../helpers/firebase';
+import { Link, Navigate } from 'react-router-dom';
+import { supabase } from '../../supabase';
 
 const Registration = () => {
   const {
@@ -29,10 +23,29 @@ const Registration = () => {
 
   const onSubmit = async (data: RegistrationSchema) => {
     try {
-      const res = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const redirectUrl = `${import.meta.env.VITE_APP}/verification`;
 
-      await updateProfile(res.user, { displayName: `${data.firstName} ${data.lastName}` });
-      await sendEmailVerification(res.user);
+      const res = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        phone: data.phoneNumber,
+        options: { emailRedirectTo: redirectUrl },
+      });
+
+      if (!res.error) {
+        await supabase
+          .from('users')
+          .insert([
+            {
+              id: res.data.user?.id,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              phone_number: data.phoneNumber,
+              email: data.email,
+            },
+          ])
+          .single();
+      }
 
       handleOpen({
         isVisible: true,

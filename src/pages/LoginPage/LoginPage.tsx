@@ -1,13 +1,13 @@
-import loginImg from '../../assets/login-img.svg';
-import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
-import { LoginSchema, loginSchema } from './variables';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Alert, AlertColor, Box, Button, Snackbar, TextField } from '@mui/material';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import loginImg from '../../assets/login-img.svg';
 import { auth } from '../../helpers/firebase';
-import { useEffect, useState } from 'react';
-import { theme } from '../../main';
+import { supabase } from '../../supabase';
+import { LoginSchema, loginSchema } from './variables';
 
 const LoginPage = () => {
   const {
@@ -34,9 +34,14 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+      const user = (await supabase.auth.getUser()).data.user;
+      const isVerified = user?.email_confirmed_at;
 
-      if (!auth.currentUser?.emailVerified)
+      if (!isVerified)
         handleOpen({ isVisible: true, message: 'Please verify your email', type: 'error' });
       else navigate('/', { replace: true });
     } catch (error) {

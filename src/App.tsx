@@ -13,15 +13,18 @@ import Registration from './pages/RegistrationPage/RegistrationPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import HomePage from './pages/HomePage/HomePage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import VerificationPage from './pages/VerifcationPage/VerificationPage';
+import { authLoader, nonAuthLoader } from './helpers/loaders';
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path='registration' element={<Registration />} />
+        <Route loader={nonAuthLoader} index element={<HomePage />} />
+        <Route loader={authLoader} path='registration' element={<Registration />} />
         <Route path='*' element={<NotFoundPage />} />
-        <Route path='login' element={<LoginPage />} />
+        <Route loader={authLoader} path='login' element={<LoginPage />} />
+        <Route loader={authLoader} path='verification' element={<VerificationPage />} />
       </Route>
     )
   );
