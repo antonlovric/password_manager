@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{10,}$/;
 export const schema = z
   .object({
     firstName: z.string().nonempty('First name is required'),
@@ -11,7 +12,7 @@ export const schema = z
       .nonempty('Password is required')
       .min(10, 'Password must be at least 10 characters long')
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{10,}$/,
+        PASSWORD_REGEX,
         'Password must contain at least one uppercase letter, one lowercase letter, one special character, and one number'
       ),
     confirmPassword: z.string().nonempty('Password confirmation is required'),

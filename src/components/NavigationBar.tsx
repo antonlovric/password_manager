@@ -1,9 +1,9 @@
 import { AccountCircle } from '@mui/icons-material';
-import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import logo from '../assets/logo.png';
 
 const NavigationBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,20 +28,7 @@ const NavigationBar = () => {
     <AppBar position='sticky'>
       <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
         <Toolbar>
-          <IconButton
-            onClick={toggleMenu}
-            size='large'
-            edge='start'
-            color='inherit'
-            aria-label='menu'
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-            <Menu open={isOpen} anchorEl={menuElement}>
-              <MenuItem>Home</MenuItem>
-              <MenuItem>Password health checker</MenuItem>
-            </Menu>
-          </IconButton>
+          <Box component={'img'} src={logo} height={'70px'} />
         </Toolbar>
 
         <IconButton

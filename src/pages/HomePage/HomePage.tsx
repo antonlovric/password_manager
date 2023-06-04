@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -11,12 +10,12 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { AddPasswordSchema } from './variables';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { supabase } from '../../supabase';
-import EditIcon from '@mui/icons-material/Edit';
 import { DateTime } from 'luxon';
 import PasswordModal from '../../components/PasswordModal/PasswordModal';
-interface ITableRow {
+import PasswordTableRow from '../../components/PasswordTableRow/PasswordTableRow';
+import PasswordSecurityModal from '../../components/PasswordSecurityModal/PasswordSecurityModal';
+export interface ITableRow {
   website: string;
   username: string;
   password: string;
@@ -36,15 +35,7 @@ const HomePage = () => {
   const [data, setData] = useState<ITableRow[]>([]);
   const [editData, setEditData] = useState<ITableRow>();
   const [isVisible, setIsVisible] = useState(false);
-  const [visibleTablePasswords, setVisibleTablePasswords] = useState<number[]>([]);
-
-  const addVisiblePassword = (index: number) => {
-    setVisibleTablePasswords([...visibleTablePasswords, index]);
-  };
-  const removeVisiblePassword = (index: number) =>
-    setVisibleTablePasswords(visibleTablePasswords.filter((password) => password !== index));
-
-  const isVisiblePassword = (index: number) => visibleTablePasswords.includes(index);
+  const [isSecurityVisible, setIsSecurityVisible] = useState(false);
 
   const handleAddPassword = async () => {
     setIsVisible(true);
@@ -52,11 +43,6 @@ const HomePage = () => {
 
   const getExpirationDate = () => {
     return DateTime.now().plus({ days: 30 }).toISO();
-  };
-
-  const getExpiresIn = (date: string | null) => {
-    if (!date) return 'Invalid date';
-    return Math.ceil(DateTime.fromISO(date).diffNow('days').days);
   };
 
   const fetchData = async () => {
@@ -101,19 +87,24 @@ const HomePage = () => {
   }, [isVisible]);
 
   const editPassword = (row: ITableRow) => {
-    console.log(row);
     setEditData(row);
     setIsVisible(true);
   };
 
+  const deletePassword = async (row: ITableRow) => {
+    await supabase.from('passwords').delete().eq('id', row.id);
+    fetchData();
+  };
+
+  const handleSecurityCheck = () => {
+    setIsSecurityVisible(true);
+  };
+
+  const closeSecurityModal = () => setIsSecurityVisible(false);
+
   useEffect(() => {
     fetchData();
   }, []);
-
-  const togglePassword = (index: number) => {
-    const isVisible = visibleTablePasswords.includes(index);
-    isVisible ? removeVisiblePassword(index) : addVisiblePassword(index);
-  };
 
   return (
     <>
@@ -121,9 +112,14 @@ const HomePage = () => {
         <h1>Password Manager</h1>
       </Box>
       <Box sx={{ px: '50px' }}>
-        <Button variant='contained' onClick={handleAddPassword}>
-          Add new password
-        </Button>
+        <Box display={'flex'} justifyContent={'space-between'} mb={'30px'}>
+          <Button variant='contained' onClick={handleAddPassword}>
+            Add new password
+          </Button>
+          <Button variant='contained' onClick={handleSecurityCheck}>
+            Check password security
+          </Button>
+        </Box>
         <TableContainer>
           <Table>
             <TableHead>
@@ -135,24 +131,12 @@ const HomePage = () => {
             </TableHead>
             <TableBody>
               {data.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <IconButton onClick={() => editPassword(row)}>
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>{row.website}</TableCell>
-                  <TableCell>{row.username}</TableCell>
-                  <TableCell>
-                    <Box display={'flex'} alignItems={'center'} gap={'10px'}>
-                      <span>{isVisiblePassword(index) ? row.password : `******`}</span>
-                      <IconButton onClick={() => togglePassword(index)}>
-                        {isVisiblePassword(index) ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{getExpiresIn(row.expiration_date)} days</TableCell>
-                </TableRow>
+                <PasswordTableRow
+                  data={row}
+                  deleteHandler={deletePassword}
+                  editHandler={editPassword}
+                  key={index}
+                />
               ))}
             </TableBody>
           </Table>
@@ -164,6 +148,7 @@ const HomePage = () => {
         submit={onSubmitPassword}
         initialData={editData}
       />
+      <PasswordSecurityModal isVisible={isSecurityVisible} closeModal={closeSecurityModal} />
     </>
   );
 };
