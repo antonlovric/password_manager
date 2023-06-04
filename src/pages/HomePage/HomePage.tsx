@@ -1,30 +1,21 @@
 import {
   Box,
   Button,
-  Fade,
-  FormControl,
   IconButton,
-  InputAdornment,
-  InputLabel,
-  Modal,
-  OutlinedInput,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { AddPasswordSchema, addPasswordSchema } from './variables';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { AddPasswordSchema } from './variables';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { supabase, theme } from '../../main';
-import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { supabase } from '../../supabase';
+import EditIcon from '@mui/icons-material/Edit';
 import { DateTime } from 'luxon';
+import PasswordModal from '../../components/PasswordModal/PasswordModal';
 interface ITableRow {
   website: string;
   username: string;
@@ -41,17 +32,10 @@ const HomePage = () => {
     'Days until Expiry',
   ];
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<AddPasswordSchema>({ resolver: zodResolver(addPasswordSchema) });
   const [data, setData] = useState<ITableRow[]>([]);
+  const [editData, setEditData] = useState<ITableRow>();
   const [isVisible, setIsVisible] = useState(false);
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [visibleTablePasswords, setVisibleTablePasswords] = useState<number[]>([]);
-
-  const toggleVisibility = () => setIsPasswordShown(!isPasswordShown);
 
   const addVisiblePassword = (index: number) => {
     setVisibleTablePasswords([...visibleTablePasswords, index]);
@@ -65,10 +49,6 @@ const HomePage = () => {
     setIsVisible(true);
   };
 
-  const handleClose = () => {
-    setIsVisible(false);
-  };
-
   const getExpirationDate = () => {
     return DateTime.now().plus({ days: 30 }).toISO();
   };
@@ -76,6 +56,13 @@ const HomePage = () => {
   const getExpiresIn = (date: string | null) => {
     if (!date) return 'Invalid date';
     return Math.ceil(DateTime.fromISO(date).diffNow('days').days);
+  };
+
+  const fetchData = async () => {
+    const res = await supabase
+      .from('passwords')
+      .select('website,username,password,expiration_date');
+    setData(res.data || []);
   };
 
   const onSubmitPassword = async (data: AddPasswordSchema) => {
@@ -91,17 +78,18 @@ const HomePage = () => {
         user_id: userInfo.data.user?.id,
       },
     ]);
+    fetchData();
+    setIsVisible(false);
   };
 
-  const fetchData = async () => {
-    const res = await supabase
-      .from('passwords')
-      .select('website,username,password,expiration_date');
-    setData(res.data || []);
-  };
+  useEffect(() => {
+    !isVisible && setEditData(undefined);
+  }, [isVisible]);
 
   const editPassword = (row: ITableRow) => {
     console.log(row);
+    setEditData(row);
+    setIsVisible(true);
   };
 
   useEffect(() => {
@@ -136,7 +124,7 @@ const HomePage = () => {
                 <TableRow key={index}>
                   <TableCell>
                     <IconButton onClick={() => editPassword(row)}>
-                      <SettingsIcon />
+                      <EditIcon />
                     </IconButton>
                   </TableCell>
                   <TableCell>{row.website}</TableCell>
@@ -156,95 +144,12 @@ const HomePage = () => {
           </Table>
         </TableContainer>
       </Box>
-      <Modal
-        component={'form'}
-        onSubmit={handleSubmit(onSubmitPassword)}
-        open={isVisible}
-        onClose={handleClose}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      >
-        <Fade in={isVisible}>
-          <Box
-            bgcolor={theme.palette.background.paper}
-            position={'absolute'}
-            left={'50%'}
-            right={'50%'}
-            padding={'20px'}
-            borderRadius={'15px'}
-            sx={{ transform: 'translate(-50%, -50%)' }}
-            display={'flex'}
-            width={'70%'}
-            top={'50%'}
-            flexDirection={'column'}
-            gap={'30px'}
-          >
-            <h2>Add password</h2>
-            <Controller
-              name='website'
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <TextField
-                  error={!!errors['website']}
-                  helperText={errors['website']?.message}
-                  label='Website'
-                  {...field}
-                />
-              )}
-            />
-            <Controller
-              name='username'
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <TextField
-                  error={!!errors['username']}
-                  helperText={errors['username']?.message}
-                  label='Username / email'
-                  {...field}
-                />
-              )}
-            />
-            <Controller
-              name='password'
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <FormControl>
-                  <InputLabel htmlFor='password'>Password</InputLabel>
-                  <OutlinedInput
-                    id='password'
-                    error={!!errors['password']}
-                    // helperText={errors['password']?.message}
-                    label='password'
-                    type={isPasswordShown ? 'text' : 'password'}
-                    endAdornment={
-                      <InputAdornment position='end'>
-                        <IconButton onClick={toggleVisibility}>
-                          {isPasswordShown ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    {...field}
-                  />
-                </FormControl>
-              )}
-            />
-            <Box display={'flex'} gap={'15px'} justifyContent={'flex-end'}>
-              <Button variant='contained' type='submit'>
-                Add
-              </Button>
-              <Button variant='contained' onClick={handleClose}>
-                Cancel
-              </Button>
-            </Box>
-          </Box>
-        </Fade>
-      </Modal>
+      <PasswordModal
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        submit={onSubmitPassword}
+        initialData={editData}
+      />
     </>
   );
 };

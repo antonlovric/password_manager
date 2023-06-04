@@ -7,7 +7,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../helpers/firebase';
 import { useEffect, useState } from 'react';
-import { supabase, theme } from '../../main';
+import { supabase } from '../../supabase';
 import { useUserStore } from '../../stores/UserStore';
 
 const LoginPage = () => {

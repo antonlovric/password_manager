@@ -4,7 +4,7 @@ import { auth } from '../helpers/firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import { supabase } from '../main';
+import { supabase } from '../supabase';
 import { AccountCircle } from '@mui/icons-material';
 
 const NavigationBar = () => {
@@ -58,7 +58,6 @@ const NavigationBar = () => {
             <AccountCircle />
           </Avatar>
           <Menu open={isProfileOpen} anchorEl={menuElement}>
-            <MenuItem>Profile</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </IconButton>

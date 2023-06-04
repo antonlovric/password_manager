@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { auth } from '../../helpers/firebase';
 import { Link, Navigate } from 'react-router-dom';
-import { supabase } from '../../main';
+import { supabase } from '../../supabase';
 
 const Registration = () => {
   const {

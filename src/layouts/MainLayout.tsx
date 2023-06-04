@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import { useState } from 'react';
-import { supabase } from '../main';
+import { supabase } from '../supabase';
 
 const MainLayout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
