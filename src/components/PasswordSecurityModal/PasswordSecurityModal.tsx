@@ -68,12 +68,12 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            {expiredPasswords?.map(
-              (password) =>
-                `Password for ${password.website} expired on ${DateTime.fromISO(
-                  password.expiration_date
-                ).toFormat('dd/MM/yyyy')}`
-            )}
+            {expiredPasswords?.map((password) => (
+              <Box>
+                `Password for ${password.website} expired on $
+                {DateTime.fromISO(password.expiration_date).toFormat('dd/MM/yyyy')}`
+              </Box>
+            ))}
             <Box display={'flex'} alignItems={'center'} gap={'10px'}>
               <InfoIcon />
               <Typography mt={'15px'}>
@@ -94,9 +94,9 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            {unsafePasswords?.map(
-              (password) => `Password for ${password.website} is not safe enough`
-            )}
+            {unsafePasswords?.map((password) => (
+              <Box>`Password for ${password.website} is not safe enough`</Box>
+            ))}
             <Box display={'flex'} alignItems={'center'} gap={'10px'}>
               <InfoIcon />
               <Typography mt={'15px'} color={'text.secondary'}>
