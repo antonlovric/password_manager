@@ -24,11 +24,12 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { supabase, theme } from '../../main';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { DateTime } from 'luxon';
 interface ITableRow {
   website: string;
   username: string;
   password: string;
-  updated_at: string;
+  expiration_date: string;
 }
 
 const HomePage = () => {
@@ -68,21 +69,34 @@ const HomePage = () => {
     setIsVisible(false);
   };
 
+  const getExpirationDate = () => {
+    return DateTime.now().plus({ days: 30 }).toISO();
+  };
+
+  const getExpiresIn = (date: string | null) => {
+    if (!date) return 'Invalid date';
+    return Math.ceil(DateTime.fromISO(date).diffNow('days').days);
+  };
+
   const onSubmitPassword = async (data: AddPasswordSchema) => {
     const userInfo = await supabase.auth.getUser();
+    const expirationDate = getExpirationDate();
+
     await supabase.from('passwords').insert([
       {
         password: data.password,
         username: data.username,
         website: data.website,
+        expiration_date: expirationDate,
         user_id: userInfo.data.user?.id,
       },
     ]);
   };
 
   const fetchData = async () => {
-    const res = await supabase.from('passwords').select('website,username,password,updated_at');
-    console.log(res.data);
+    const res = await supabase
+      .from('passwords')
+      .select('website,username,password,expiration_date');
     setData(res.data || []);
   };
 
@@ -135,7 +149,7 @@ const HomePage = () => {
                       </IconButton>
                     </Box>
                   </TableCell>
-                  <TableCell>{row.updated_at}</TableCell>
+                  <TableCell>{getExpiresIn(row.expiration_date)} days</TableCell>
                 </TableRow>
               ))}
             </TableBody>
