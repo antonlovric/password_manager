@@ -6,14 +6,9 @@ import { supabase } from '../supabase';
 import logo from '../assets/logo.png';
 
 const NavigationBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [menuElement, setMenuElement] = useState<HTMLElement | null>(null);
   const navigate = useNavigate();
-  const toggleMenu: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    setIsOpen(!isOpen);
-    setMenuElement(e.currentTarget);
-  };
 
   const toggleProfileMenu: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     setIsProfileOpen(!isProfileOpen);
