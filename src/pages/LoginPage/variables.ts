@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { PASSWORD_REGEX } from '../RegistrationPage/variables';
 
+export type LoginMethod = 1 | 2 | 3;
+
 export const loginSchema = z.object({
   email: z.string().email('Invalid email format').nonempty('Email is required'),
   password: z
