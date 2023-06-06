@@ -45,7 +45,7 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
     setUnsafePasswords(checkedPasswords);
     const checkedExpiredPasswords = passwords.filter(
       (password) =>
-        DateTime.now().startOf('day') < DateTime.fromISO(password.expiration_date).startOf('day')
+        DateTime.now().startOf('day') >= DateTime.fromISO(password.expiration_date).startOf('day')
     );
     setExpiredPasswords(checkedExpiredPasswords);
     setIsChecked(true);
@@ -69,14 +69,14 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
           </AccordionSummary>
           <AccordionDetails>
             {expiredPasswords?.map((password) => (
-              <Box>
-                `Password for ${password.website} expired on $
-                {DateTime.fromISO(password.expiration_date).toFormat('dd/MM/yyyy')}`
+              <Box key={password.id}>
+                Password for {password.website} expired on
+                {` ${DateTime.fromISO(password.expiration_date).toFormat('dd/MM/yyyy')}`}
               </Box>
             ))}
-            <Box display={'flex'} alignItems={'center'} gap={'10px'}>
+            <Box display={'flex'} alignItems={'center'} gap={'10px'} mt={'15px'}>
               <InfoIcon />
-              <Typography mt={'15px'}>
+              <Typography>
                 You should update your passwords every 30 days to be more safe
               </Typography>
             </Box>
@@ -95,7 +95,9 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
           </AccordionSummary>
           <AccordionDetails>
             {unsafePasswords?.map((password) => (
-              <Box>`Password for ${password.website} is not safe enough`</Box>
+              <Box key={password.id}>
+                Password for website {password.website} is not safe enough
+              </Box>
             ))}
             <Box display={'flex'} alignItems={'center'} gap={'10px'}>
               <InfoIcon />
