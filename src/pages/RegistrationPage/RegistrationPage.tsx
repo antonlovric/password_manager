@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { auth } from '../../helpers/firebase';
 import { Link, Navigate } from 'react-router-dom';
 import { supabase } from '../../supabase';
+import { REDIRECT_URL } from '../../helpers/variables';
 
 const Registration = () => {
   const {
@@ -23,13 +24,11 @@ const Registration = () => {
 
   const onSubmit = async (data: RegistrationSchema) => {
     try {
-      const redirectUrl = `${import.meta.env.VITE_APP}/verification`;
-
       const res = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         phone: data.phoneNumber,
-        options: { emailRedirectTo: redirectUrl },
+        options: { emailRedirectTo: REDIRECT_URL },
       });
 
       if (!res.error) {
