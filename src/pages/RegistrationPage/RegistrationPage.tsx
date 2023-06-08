@@ -88,6 +88,7 @@ const Registration = () => {
               helperText={errors['firstName']?.message}
               label='First name'
               {...field}
+              style={{ maxWidth: '350px', width: '350px' }}
             />
           )}
         />
@@ -102,6 +103,7 @@ const Registration = () => {
               helperText={errors['lastName']?.message}
               label='Last name'
               {...field}
+              style={{ maxWidth: '350px', width: '350px' }}
             />
           )}
         />
@@ -117,6 +119,7 @@ const Registration = () => {
               label='Email'
               type='email'
               {...field}
+              style={{ maxWidth: '350px', width: '350px' }}
             />
           )}
         />
@@ -131,6 +134,7 @@ const Registration = () => {
               helperText={errors['phoneNumber']?.message}
               label='Phone number'
               {...field}
+              style={{ maxWidth: '350px', width: '350px' }}
             />
           )}
         />
@@ -145,6 +149,7 @@ const Registration = () => {
               helperText={errors['password']?.message}
               label='Password'
               type='password'
+              style={{ maxWidth: '350px', width: '350px' }}
               {...field}
             />
           )}
@@ -161,6 +166,7 @@ const Registration = () => {
               label='Confirm Password'
               type='password'
               {...field}
+              style={{ maxWidth: '350px', width: '350px' }}
             />
           )}
         />
