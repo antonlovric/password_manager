@@ -7,6 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { AddPasswordSchema } from './variables';
@@ -130,14 +131,23 @@ const HomePage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row, index) => (
-                <PasswordTableRow
-                  data={row}
-                  deleteHandler={deletePassword}
-                  editHandler={editPassword}
-                  key={index}
-                />
-              ))}
+              {data.length > 0 ? (
+                data.map((row, index) => (
+                  <PasswordTableRow
+                    data={row}
+                    deleteHandler={deletePassword}
+                    editHandler={editPassword}
+                    key={index}
+                  />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Typography textAlign={'center'}>No data available</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+              {}
             </TableBody>
           </Table>
         </TableContainer>

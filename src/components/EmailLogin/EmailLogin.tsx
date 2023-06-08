@@ -24,7 +24,7 @@ const EmailLogin = () => {
   const handleOpen = (toastInfo: typeof toast) => setToast({ ...toastInfo });
   const onSubmit = async (data: LoginSchema) => {
     try {
-      await supabase.auth.signInWithPassword({
+      const res = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -33,6 +33,8 @@ const EmailLogin = () => {
 
       if (!isVerified)
         handleOpen({ isVisible: true, message: 'Please verify your email', type: 'error' });
+
+      if (res.error) handleOpen({ isVisible: true, message: res.error.message, type: 'error' });
       else navigate('/', { replace: true });
     } catch (error) {
       handleOpen({ isVisible: true, message: 'Error when logging in', type: 'error' });

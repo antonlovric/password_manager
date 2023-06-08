@@ -44,6 +44,8 @@ const Registration = () => {
             },
           ])
           .single();
+      } else {
+        handleOpen({ isVisible: true, message: res.error.message, type: 'error' });
       }
 
       handleOpen({

@@ -25,10 +25,11 @@ const MagicLinkLogin = () => {
   const handleOpen = (toastInfo: typeof toast) => setToast({ ...toastInfo });
   const onSubmit = async (data: MagicLinkSchema) => {
     try {
-      await supabase.auth.signInWithOtp({
+      const res = await supabase.auth.signInWithOtp({
         email: data.email,
         options: { shouldCreateUser: false, emailRedirectTo: REDIRECT_URL },
       });
+      if (res.error) handleOpen({ isVisible: true, message: res.error.message, type: 'error' });
     } catch (error) {
       handleOpen({ isVisible: true, message: 'Error when logging in', type: 'error' });
     }

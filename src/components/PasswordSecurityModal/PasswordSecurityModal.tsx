@@ -99,10 +99,10 @@ const PasswordSecurityModal = ({ isVisible, closeModal }: IPasswordSecurityModal
                 Password for website {password.website} is not safe enough
               </Box>
             ))}
-            <Box display={'flex'} alignItems={'center'} gap={'10px'}>
+            <Box display={'flex'} mt={'15px'} alignItems={'center'} gap={'10px'}>
               <InfoIcon />
-              <Typography mt={'15px'} color={'text.secondary'}>
-                Safe passwords have atleast 10 lowercase or uppercase characters, at least one
+              <Typography color={'text.secondary'}>
+                Safe passwords have atleast 12 lowercase or uppercase characters, at least one
                 number and one special character
               </Typography>
             </Box>
