@@ -8,7 +8,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .nonempty('Password is required')
-    .min(10, 'Password must be at least 10 characters long')
+    .min(12, 'Password must be at least 10 characters long')
     .regex(
       PASSWORD_REGEX,
       'Password must contain at least one uppercase letter, one lowercase letter, one special character, and one number'
