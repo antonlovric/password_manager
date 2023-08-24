@@ -30,6 +30,12 @@ const MagicLinkLogin = () => {
         options: { shouldCreateUser: false, emailRedirectTo: REDIRECT_URL },
       });
       if (res.error) handleOpen({ isVisible: true, message: res.error.message, type: 'error' });
+      else
+        handleOpen({
+          isVisible: true,
+          message: 'Please check you email for further instructions',
+          type: 'success',
+        });
     } catch (error) {
       handleOpen({ isVisible: true, message: 'Error when logging in', type: 'error' });
     }
